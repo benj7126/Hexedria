@@ -24,6 +24,24 @@ local function makeGrid(world, size)
     return grid
 end
 
+local function makeGridNumbers(world, size)
+    local grid = {}
+
+    for y = -size/2, size/2 do
+        for x = -size/2, size/2 do
+            if x-y <= size/2 and x-y >= -size/2 then
+                if not grid[y] then
+                    grid[y] = {}
+                end
+                
+                grid[y][x-y] = 0
+            end
+        end
+    end
+
+    return grid
+end
+
 local function getWallsAround(grid, x, y)
     local positions = GetPositions(x, y)
 
@@ -83,8 +101,6 @@ local function smoothMap(grid, size)
             end
         end
     end
-
-    return grid
 end
 
 local function doorPatters(x, y)
@@ -96,6 +112,8 @@ local function doorPatters(x, y)
 end
 
 local function makeDoors(grid, size)
+    local doorPosition = {}
+
     for y = -size/2, size/2 do
         for x = -size/2, size/2 do
             if x-y <= size/2 and x-y >= -size/2 then
@@ -120,8 +138,9 @@ local function makeDoors(grid, size)
                         end
 
                         if makeDoor then
-                            grid[tx][ty].door = 2
+                            grid[tx][ty].door = 1
                             grid[tx][ty].doorRot = doorRot
+                            table.insert(doorPosition, {tx, ty})
                         end
                     end
                 end
@@ -129,7 +148,7 @@ local function makeDoors(grid, size)
         end
     end
 
-    return grid
+    return doorPosition
 end
 
 local function cloneMap(world, oldGrid, size)
@@ -160,7 +179,7 @@ return function (world, size)
     local grid = makeGrid(world, size)
     
     smoothMap(grid, size)
-    makeDoors(grid, size)
-    
+    local doorPositions = makeDoors(grid, size)
+
     return grid, {}
 end

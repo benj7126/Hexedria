@@ -18,6 +18,8 @@ function Tile:new(world)
     self.explodable = false
     -- can be removed to acces a new room
 
+    self.isTrapDoor = false -- gateway for next layer
+
     self.doorRot = 0
     self.door = 0
     -- 0 = no door

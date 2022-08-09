@@ -24,18 +24,25 @@ function Layer:new(world)
     setmetatable(layer, self)
     self.__index = self
 
+    layer.monsters = {}
+
+    layer:setDefaults()
+
     layer:placeEntities()
 
     return layer
 end
 
 function Layer:placeEntities()
-    for i, v in pairs(self.rooms) do
-        self:addEntity(SG:new(TestWorld), v[1], v[2])
+    
+end
 
-        self:addEntity(G:new(TestWorld), v[1]+1, v[2])
-        self:addEntity(G:new(TestWorld), v[1]-1, v[2])
-    end
+function Layer:setDefaults()
+    self.monsters = {
+        Normal = {G, SG},
+        Strong = {},
+        Boss = {}
+    }
 end
 
 function Layer:getNextMove(entity, name)
