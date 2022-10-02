@@ -1,8 +1,8 @@
-local World = require "world"
--- test entity
+local enet = require "enet"
+local host = enet.host_create("localhost:6789")
 
-local updateTimer = 0
-W, H = love.graphics.getWidth(), love.graphics.getHeight()
+local World = require "Server/world"
+-- test entity
 
 local outerRadius = 10
 local innerRadius = outerRadius * 0.866025404
@@ -10,35 +10,8 @@ local innerRadius = outerRadius * 0.866025404
 -- print(innerRadius, outerRadius)
 --       8.66025404 , 10
 
-function love.load()
-    TestWorld = World:new()
-    TestWorld:loadWeapons()
-    TestWorld:initiatePlayer()
-    TestWorld:nextLayer()
-    
-    love.graphics.setFont(love.graphics.newFont("LEMONMILK-Regular.otf", 12))
-end
-
-function love.draw()
-    love.graphics.setBackgroundColor(0.1, 0.1, 0.1)
-    TestWorld:draw()
-end
-
-function love.update(dt)
-    TestWorld:update(dt)
-end
-
-function love.mousepressed(x, y, b)
-    TestWorld:mousepressed(x, y, b)
-end
-
-function love.mousereleased(x, y, b)
-    TestWorld:mousereleased(x, y, b)
-end
-
-function love.wheelmoved( x, y )
-    TestWorld:wheelmoved(x, y)
-end
+TestWorld = World:new()
+TestWorld:setup()
 
 local function round(x)
     return math.floor(x+0.5)
@@ -91,18 +64,6 @@ function GenerateGridClone(layer)
     end
 
     return map
-end
-
-local colors = {
-    {0.15294117647058825,0.14901960784313725,0.2627450980392157},
-    {1,1,1},
-    {0.8901960784313725,0.9647058823529412,0.9607843137254902},
-    {0.7294117647058823,0.9098039215686274,0.9098039215686274},
-    {0.17254901960784313,0.4117647058823529,0.5529411764705883},
-}
-
-function SetColor(colorIndex)
-    love.graphics.setColor(colors[colorIndex])
 end
 
 function ScreenToHexRound(x, y)
@@ -172,11 +133,20 @@ function CastHexRay(fx, fy, tx, ty, world)
     return true
 end
 
---[[
-for world gen:
-    start at center, and go outwards
-    make rooms, and make rooms, like a tree
-    and stuff
-]]--
-
--- hide, set all currently visible tiles to 0 and minus towards black spaces (only if the player is close)
+while true do
+    TestWorld:update(dt)
+    
+    print("a")
+    local event = host:service(100)
+    while event do
+      if event.type == "receive" then
+        print("Got message: ", event.data, event.peer)
+        event.peer:send( "pong" )
+      elseif event.type == "connect" then
+        print(event.peer, "connected.")
+      elseif event.type == "disconnect" then
+        print(event.peer, "disconnected.")
+      end
+      event = host:service()
+    end
+end

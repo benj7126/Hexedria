@@ -1,4 +1,4 @@
-local Instance = require "chronosInstance"
+local Instance = require "Server/chronosInstance"
 -- time manager
 
 local Chronos = {}

@@ -1,4 +1,4 @@
-local Map = require("maps.BaseRangedMap"):new()
+local Map = require("Server/maps.BaseRangedMap"):new()
 
 Map.targetMin = 2
 Map.targetMax = 3

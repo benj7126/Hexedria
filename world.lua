@@ -277,6 +277,4 @@ function printLoop(val, str, depth)
     end
 end
 
-printLoop(getmetatable(ET.Position.X), "", 0)
-
 return World

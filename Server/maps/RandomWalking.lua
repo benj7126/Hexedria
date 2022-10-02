@@ -1,4 +1,4 @@
-local Map = require("maps.BaseMap"):new()
+local Map = require("Server/maps.BaseMap"):new()
 
 function Map:getName()
     return "StickToRoom"

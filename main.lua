@@ -1,7 +1,13 @@
+local enet = require "enet"
+local host = enet.host_create()
+local server = host:connect("localhost:6789")
+
 local World = require "world"
 -- test entity
 
-local updateTimer = 0
+local code = love.filesystem.read("Server/main.lua")
+local thread = love.thread.newThread(code);
+
 W, H = love.graphics.getWidth(), love.graphics.getHeight()
 
 local outerRadius = 10
@@ -11,6 +17,8 @@ local innerRadius = outerRadius * 0.866025404
 --       8.66025404 , 10
 
 function love.load()
+    thread:start()
+
     TestWorld = World:new()
     TestWorld:loadWeapons()
     TestWorld:initiatePlayer()
@@ -26,6 +34,21 @@ end
 
 function love.update(dt)
     TestWorld:update(dt)
+
+    print(server)
+    local event = host:service(100)
+    while event do
+      if event.type == "receive" then
+        print("Got message: ", event.data, event.peer)
+        event.peer:send( "ping" )
+      elseif event.type == "connect" then
+        print(event.peer, "connected.")
+        event.peer:send( "ping" )
+      elseif event.type == "disconnect" then
+        print(event.peer, "disconnected.")
+      end
+      event = host:service()
+    end
 end
 
 function love.mousepressed(x, y, b)

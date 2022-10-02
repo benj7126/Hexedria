@@ -1,4 +1,4 @@
-local Weapon = require("weapon"):new()
+local Weapon = require("Server/weapon"):new()
 
 function Weapon:setDefaults()
     self.damage = 2

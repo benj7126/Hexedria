@@ -9,6 +9,7 @@ local Entity = {
     pos = {0, 0},
     chronosInstance = nil,
     followPath = {},
+    enmity = {} -- dictionary of payers and their 'enmity'
 }
 
 local outerRadius = 10

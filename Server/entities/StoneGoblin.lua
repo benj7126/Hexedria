@@ -1,4 +1,4 @@
-local Goblin = require("entity"):new()
+local Goblin = require("Server/entity"):new()
 
 function Goblin:setDefaults(world)
     self.name = 'Stone Wielding Goblin'

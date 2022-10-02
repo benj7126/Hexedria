@@ -1,7 +1,7 @@
-local LayerGen = require "layerGenerator"
+local LayerGen = require "Server/layerGenerator"
 
-local G = require("entities.Goblin")
-local SG = require("entities.StoneGoblin")
+local G = require("Server/entities.Goblin")
+local SG = require("Server/entities.StoneGoblin")
 
 local Layer = {}
 
@@ -151,39 +151,6 @@ function Layer:moveEntityTo(entity, x, y)
     self.grid[x][y].entity = self.grid[entity.pos[1]][entity.pos[2]].entity
     self.grid[entity.pos[1]][entity.pos[2]].entity = nil
     entity.pos = {x, y}
-end
-
-function Layer:draw()
-    for x = -self.size/2, self.size/2 do
-        for y = -self.size/2, self.size/2 do
-            if self.grid[x][y] then
-                self.grid[x][y]:draw(x, y, self.world)
-                
-                -- debugging layerGen
-                -- if self.debug[x] then
-                --     if self.debug[x][y] then
-                --         love.graphics.setColor(0, 0, 1)
-                --         local nx, ny = ScreenToHex(x, y)
-                --         love.graphics.printf(self.debug[x][y], nx, ny, 100, "left", 0, 0.3)
-                --     end
-                -- end
-            end
-        end
-    end
-    -- self.movementMaps["CloseRange"]:draw()
-
-    -- for i, v in pairs(self.movementMaps) do
-    --     v:draw()
-    -- end
-
-    -- local x, y = TestWorld:getMousePosition()
-
-    -- y = y/(outerRadius*1.5)
-    -- x = x/(innerRadius*2)-y*0.5
-
-    -- print(x, y)
-
-    -- drawHexagonSMOL((x + y * 0.5)*innerRadius*2, y*outerRadius*1.5)
 end
 
 return Layer

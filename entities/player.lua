@@ -9,6 +9,10 @@ Player.stats = {
     move = true,
 }
 
+function Player:connect(peer)
+    
+end
+
 function Player:AI(world)
     self.stats.move = true
     return false

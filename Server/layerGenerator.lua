@@ -1,4 +1,4 @@
-local Tile = require "tile"
+local Tile = require "Server/tile"
 
 local randomGenVal = 0.4
 
