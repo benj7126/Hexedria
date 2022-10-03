@@ -39,7 +39,23 @@ function Tile:new(world)
 end
 
 function Tile:unPassable()
+    return self.door == 2 or self.wall or self.entity ~= nil
+end
+
+function Tile:isWall()
     return self.door == 2 or self.wall
+end
+
+function Tile:rightClick(plr, mx, my) -- my x and my y
+    if self.door == 0 or self.entity ~= nil or CubeDistance(plr.pos[1], plr.pos[2], mx, my) ~= 1 then -- there is no door so no acion
+        return false;
+    end
+
+    if self.door == 1 or self.door == 2 then
+        self.door = self.door*-1+3
+    end
+
+    return true
 end
 
 local function drawHexagon(x, y) -- for now, will be replaced with an image
@@ -109,10 +125,13 @@ function Tile:draw(x, y)
         r = math.pi/3*2
     end
 
-    if self.door == 1 then
-        love.graphics.draw(doorOpen, nx, ny, r, scale, scale, 1000, 1000)
-    elseif self.door == 2 then
-        love.graphics.draw(doorClosed, nx, ny, r, scale, scale, 1000, 1000)
+    if self.visibility > 0 then
+        love.graphics.setColor(1, 1, 1)
+        if self.door == 1 then
+            love.graphics.draw(doorOpen, nx, ny, r, scale, scale, 1000, 1000)
+        elseif self.door == 2 then
+            love.graphics.draw(doorClosed, nx, ny, r, scale, scale, 1000, 1000)
+        end
     end
 
     self.highlight = 0
@@ -120,13 +139,6 @@ end
 
 function Tile:movedEntity()
     self.entity = nil -- moves to another tile, idk if i will use it, we will see
-end
-
-function Tile:leftClicked()
-    print("a")
-    if self.door ~= 0 then
-        self.door = math.abs(self.door-3)
-    end
 end
 
 return Tile

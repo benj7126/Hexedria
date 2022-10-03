@@ -138,7 +138,7 @@ local function makeDoors(grid, size)
                         end
 
                         if makeDoor then
-                            grid[tx][ty].door = 1
+                            grid[tx][ty].door = 2
                             grid[tx][ty].doorRot = doorRot
                             table.insert(doorPosition, {tx, ty})
                         end

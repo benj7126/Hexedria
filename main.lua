@@ -146,7 +146,7 @@ function HexDist(fx, fy, tx, ty)
 end
 
 function CastHexRay(fx, fy, tx, ty, world)
-    if fx==tx and fy==ty then
+        if fx==tx and fy==ty then
         return true
     end
 

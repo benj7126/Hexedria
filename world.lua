@@ -22,7 +22,7 @@ function World:new()
 
     world.transform = love.math.newTransform()
 
-    world.speed = 0--0.2 -- speed of the world entity update
+    world.speed = -0.4 -- speed of the world entity update
     -- should be something like 
     -- instant = 0
     -- fast = 0.05

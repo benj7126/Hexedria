@@ -48,7 +48,7 @@ function Entity:new(world)
     entity.mp = entity.maxmp
 
     entity.weapon = world:getWeapon(entity.weapon):new()
-
+    
     return entity
 end
 
@@ -105,8 +105,6 @@ end
 
 function Entity:takeDamage(world, amount)
     self.hp = self.hp - amount
-
-    print(self.hp)
 
     if self.hp <= 0 then
         self:onDeath(world)
@@ -165,13 +163,10 @@ function Entity:playerMoved(fx, fy, tx, ty, world)
     local lastPos = CastHexRay(self.pos[1], self.pos[2], fx, fy, world)
     local newPos = CastHexRay(self.pos[1], self.pos[2], tx, ty, world)
 
-    print(lastPos, newPos)
-
     if lastPos and not newPos then
         local map = world.layerObj.movementMaps["Default"]
 
         self.followPath = map:getPathTowardsPlrFrom(self)
-        print(#self.followPath)
     end
 end
 

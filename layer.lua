@@ -2,6 +2,8 @@ local LayerGen = require "layerGenerator"
 
 local G = require("entities.Goblin")
 local SG = require("entities.StoneGoblin")
+local HG = require("entities.HobGoblin")
+local GK = require("entities.GoblinKing")
 
 local Layer = {}
 
@@ -13,6 +15,10 @@ function Layer:new(world)
     layer.movementMaps = {}
 
     layer.size = 80
+
+    layer.monsterSpread = {
+        6, 0.5 -- 6% normal, 0.5% Strong
+    }
     
     layer.images = { -- then the other layers should replace the images
         
@@ -33,16 +39,55 @@ function Layer:new(world)
     return layer
 end
 
+local function randomOf(list)
+    local RNR = love.math.random(1, #list)
+    return list[RNR], RNR
+end
+
 function Layer:placeEntities()
-    
+    local listOfPlacableTiles = {}
+
+    for x = -self.size/2, self.size/2 do
+        for y = -self.size/2, self.size/2 do
+            if self.grid[x][y] then
+                if not self.grid[x][y]:unPassable() then
+                    table.insert(listOfPlacableTiles, {x, y})
+                end
+            end
+        end
+    end
+
+    local openTiles = #listOfPlacableTiles
+
+    local Normal, Strong, Boss = self:getMonsterThings(openTiles)
+
+    -- for i = 1, Normal do
+    --     local tilePos, i2 = randomOf(listOfPlacableTiles)
+    --     self:addEntity(randomOf(self.monsters.Normal):new(self.world), tilePos[1], tilePos[2])
+    --     table.remove(listOfPlacableTiles, i2)
+    -- end
+    for i = 1, Strong do
+        local tilePos, i2 = randomOf(listOfPlacableTiles)
+        self:addEntity(randomOf(self.monsters.Strong):new(self.world), tilePos[1], tilePos[2])
+        table.remove(listOfPlacableTiles, i2)
+    end
+    for i = 1, Boss do
+        local tilePos, i2 = randomOf(listOfPlacableTiles)
+        self:addEntity(randomOf(self.monsters.Boss):new(self.world), tilePos[1], tilePos[2])
+        table.remove(listOfPlacableTiles, i2)
+    end
 end
 
 function Layer:setDefaults()
     self.monsters = {
-        Normal = {G, SG},
-        Strong = {},
-        Boss = {}
+        Normal = {G},--, SG},
+        Strong = {HG},
+        Boss = {GK}
     }
+end
+
+function Layer:getMonsterThings(openTiles)
+    return math.floor((self.monsterSpread[1]/100)*openTiles), math.floor((self.monsterSpread[2]/100)*openTiles), 1
 end
 
 function Layer:getNextMove(entity, name)
@@ -62,6 +107,7 @@ function Layer:removeEntity(entity)
 end
 
 function Layer:addEntity(entity, x, y)
+    -- print(entity, x, y)
     self.grid[x][y].entity = entity
     entity.pos = {x, y}
     
@@ -133,7 +179,7 @@ end
 function Layer:isHexWall(x, y) -- is there a wall there
     if self.grid[x] then
         if self.grid[x][y] then
-            if self.grid[x][y]:unPassable() then
+            if self.grid[x][y]:isWall() then
                 return true
             end
         end

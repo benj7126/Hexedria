@@ -19,6 +19,8 @@ function Player:setDefaults(world)
     self.speed = 1
     self.maxhp = 100
 
+    self.weapon = "Fists" -- Stones
+
     if (type(self.stats.extraWeapon) == "string") then
         self.stats.extraWeapon = world:getWeapon(self.stats.extraWeapon):new()
     end
@@ -47,9 +49,24 @@ end
 function Player:mousepressed(world, x, y, b)
     self:setHighlight(world)
 
-    if b ~= 1 or self.chronosInstance.time ~= -1 then return end
-
     local x, y = TestWorld:getHex()
+
+    if b == 2 and self.stats.move then
+        local takeAction = false
+
+
+        if world.layerObj.grid[x] then
+            if world.layerObj.grid[x][y] then
+                takeAction = world.layerObj.grid[x][y]:rightClick(self, x, y)
+            end
+        end
+
+        if takeAction then
+            self.stats.move = false
+        end
+    end
+
+    if b ~= 1 or self.chronosInstance.time ~= -1 then return end
 
     if (x == self.pos[1] and y == self.pos[2]) then
         if self.stats.move == true then
@@ -111,9 +128,13 @@ function Player:setHighlight(world) -- this draw is not a graphics draw, its a s
         local didSetTarget = false
 
         for i, v in pairs(GetPositions(px, py)) do
-            if world.layerObj:isHexFree(v[1], v[2]) then
-                world.layerObj.grid[v[1]][v[2]].highlight = 1
-                didSetTarget = true
+            if world.layerObj.grid[v[1]] then
+                if world.layerObj.grid[v[1]][v[2]] then
+                    if not world.layerObj.grid[v[1]][v[2]]:unPassable() then
+                        world.layerObj.grid[v[1]][v[2]].highlight = 1
+                        didSetTarget = true
+                    end
+                end
             end
         end
 
@@ -130,7 +151,10 @@ function Player:setHighlight(world) -- this draw is not a graphics draw, its a s
                     if world.layerObj.grid[x][y].entity then
                         local dist = CubeDistance(x, y, px, py)
                         
+                        print(self.weapon.name)
                         local map = world.layerObj.movementMaps[self.weapon:mapName()]
+
+                        print(map.targetMax, map.targetMin)
 
                         if dist <= map.targetMax and dist >= map.targetMin and dist ~= 0 then
                             if CastHexRay(x, y, px, py, world) then
@@ -142,6 +166,8 @@ function Player:setHighlight(world) -- this draw is not a graphics draw, its a s
                 end
             end
         end
+
+        print(didSetTarget, "target")
 
         if not didSetTarget then
             self.chronosInstance.time = 0
